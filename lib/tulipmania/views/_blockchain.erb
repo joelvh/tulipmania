@@ -20,10 +20,10 @@
                 <%= tx.id[0..2] %>
               </td>
               <td>
-                $<%= tx.amount %>
+                <%= tx.from[0..15] %> → <%= tx.to[0..15] %>
               </td>
               <td>
-                <%= tx.from[0..7] %> → <%= tx.to[0..7] %>
+                 <%= tx.what %> × <%= tx.qty %> 
               </td>
             </tr>
           <% end %>
@@ -31,4 +31,7 @@
       </div>
     <% end %>
   </div>
+  <p>
+    †: Grower Transaction - New Tulips on the Market!
+  </p>
 </div>

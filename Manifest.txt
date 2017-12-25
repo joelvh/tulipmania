@@ -1,4 +1,5 @@
 HISTORY.md
+LICENSE.md
 Manifest.txt
 README.md
 Rakefile
@@ -9,6 +10,8 @@ lib/tulipmania/cache.rb
 lib/tulipmania/exchange.rb
 lib/tulipmania/ledger.rb
 lib/tulipmania/node.rb
+lib/tulipmania/pool.rb
+lib/tulipmania/service.rb
 lib/tulipmania/transaction.rb
 lib/tulipmania/version.rb
 lib/tulipmania/views/_blockchain.erb

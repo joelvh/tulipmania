@@ -32,7 +32,7 @@ get '/' do
 end
 
 post '/send' do
-  node.on_send( params[:to], params[:amount].to_i )
+  node.on_send( params[:to], params[:qty].to_i, params[:what] )
   settings.connections.each { |out| out << "data: added transaction\n\n" }
   redirect '/'
 end
@@ -42,7 +42,8 @@ post '/transactions' do
   if node.on_add_transaction(
     params[:from],
     params[:to],
-    params[:amount].to_i,
+    params[:qty].to_i,
+    params[:what],
     params[:id]
   )
     settings.connections.each { |out| out << "data: added transaction\n\n" }
@@ -106,6 +107,17 @@ def node
   ## end
 end
 
+
+############
+## helpers
+
+def fmt_tulips( hash )
+   lines = []
+   hash.each do |what,qty|
+     lines << "#{what} × #{qty}"
+   end
+   lines.join( ', ' )
+end
 
 end # class Service
 end # module Tulipmania

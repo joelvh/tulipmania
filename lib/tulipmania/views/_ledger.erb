@@ -3,12 +3,12 @@
   <table>
     <tr>
       <th>Address</th>
-      <th>Balance</th>
+      <th>Tulips</th>
     </tr>
-    <% @node.exchange.ledger.wallets.each do |address, amount| %>
+    <% @node.exchange.ledger.wallets.each do |address, tulips| %>
       <tr>
         <td><%= address[0..15] %></td>
-        <td>$<%= amount %></td>
+        <td><%= fmt_tulips( tulips ) %></td>
       </tr>
     <% end %>
   </table>

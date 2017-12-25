@@ -2,21 +2,22 @@
 
 class Transaction
 
-  attr_reader :from, :to, :amount, :id
+  attr_reader :from, :to, :qty, :what, :id
 
-  def initialize( from, to, amount, id=SecureRandom.uuid )
+  def initialize( from, to, qty, what, id=SecureRandom.uuid )
     @from   = from
     @to     = to
-    @amount = amount
+    @qty    = qty
+    @what   = what      # tulip name - change to name or title - why? why not?
     @id     = id
   end
 
   def self.from_h( hash )
-    self.new *hash.values_at( 'from', 'to', 'amount', 'id' )
+    self.new *hash.values_at( 'from', 'to', 'qty', 'what', 'id' )
   end
 
   def to_h
-    { from: @from, to: @to, amount: @amount, id: @id }
+    { from: @from, to: @to, qty: @qty, what: @what, id: @id }
   end
 
 

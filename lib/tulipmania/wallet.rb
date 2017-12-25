@@ -8,8 +8,8 @@ class Wallet
     @address = address
   end
 
-  def generate_transaction( to, amount )
-    Tx.new( address, to, amount )
+  def generate_transaction( to, qty, what )
+    Tx.new( address, to, qty, what )
   end
 
 end  # class Wallet

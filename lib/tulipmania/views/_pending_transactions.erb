@@ -5,14 +5,16 @@
       <tr>
         <th>From</th>
         <th>To</th>
-        <th>$</th>
+        <th>What</th>
+        <th>Qty &nbsp;</th>
         <th>Id</th>
       </tr>
       <% @node.exchange.pending.each do |tx| %>
         <tr>
           <td><%= tx.from[0..15] %></td>
           <td><%= tx.to[0..15] %></td>
-          <td><%= tx.amount %></td>
+          <td><%= tx.what %></td>
+          <td>× <%= tx.qty %></td>
           <td><%= tx.id[0..2] %></td>
         </tr>
       <% end %>

@@ -18,9 +18,10 @@ class Exchange
       @pending = Pool.from_json( h['transactions'] )
     else
       @chain   = Blockchain.new
-      @chain  << [Tx.new( Tulipmania.config.coinbase,
+      @chain  << [Tx.new( Tulipmania.config.rand_coinbase,
                           @address,
-                          Tulipmania.config.mining_reward )]    # genesis (big bang!) starter block
+                          Tulipmania.config.mining_reward,
+                          Tulipmania.config.rand_tulip )]    # genesis (big bang!) starter block
       @pending = Pool.new
     end
 
@@ -31,9 +32,10 @@ class Exchange
 
 
   def mine_block!
-    add_transaction( Tx.new( Tulipmania.config.coinbase,
+    add_transaction( Tx.new( Tulipmania.config.rand_coinbase,
                              @address,
-                             Tulipmania.config.mining_reward ))
+                             Tulipmania.config.mining_reward,
+                             Tulipmania.config.rand_tulip ))
 
     ## add mined (w/ computed/calculated hash) block
     @chain << @pending.transactions
@@ -46,11 +48,11 @@ class Exchange
   end
 
 
-  def sufficient_funds?( wallet, amount )
+  def sufficient_tulips?( wallet, qty, what )
     ## (convenience) delegate for ledger
     ##  todo/check: use address instead of wallet - why? why not?
     ##   for now single address wallet (that is, wallet==address)
-    @ledger.sufficient_funds?( wallet, amount )
+    @ledger.sufficient_tulips?( wallet, qty, what )
   end
 
 

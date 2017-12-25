@@ -25,10 +25,10 @@ class Node
   end
 
 
-  def on_add_transaction( from, to, amount, id )
+  def on_add_transaction( from, to, qty, what, id )
     ## note: for now must always pass in id - why? why not? possible tx without id???
-    tx = Tx.new( from, to, amount, id )
-    if @exchange.sufficient_funds?( tx.from, tx.amount ) && @exchange.add_transaction( tx )
+    tx = Tx.new( from, to, qty, what, id )
+    if @exchange.sufficient_tulips?( tx.from, tx.qty, tx.what ) && @exchange.add_transaction( tx )
       send_transaction_to_peers( tx )
       return true
     else
@@ -36,9 +36,9 @@ class Node
     end
   end
 
-  def on_send( to, amount )
-    tx = @wallet.generate_transaction( to, amount )
-    if @exchange.sufficient_funds?( tx.from, tx.amount ) && @exchange.add_transaction( tx )
+  def on_send( to, qty, what )
+    tx = @wallet.generate_transaction( to, qty, what )
+    if @exchange.sufficient_tulips?( tx.from, tx.qty, tx.what ) && @exchange.add_transaction( tx )
       send_transaction_to_peers( tx )
       return true
     else
