@@ -5,6 +5,7 @@ require 'json'
 require 'digest'
 require 'net/http'
 require 'set'
+require 'optparse'
 require 'pp'
 
 
@@ -29,7 +30,7 @@ require 'tulipmania/wallet'
 require 'tulipmania/node'
 require 'tulipmania/service'
 
-
+require 'tulipmania/tool'
 
 
 module Tulipmania
@@ -97,6 +98,10 @@ module Tulipmania
   end
 
 
+  ## add command line binary (tool) e.g. $ try centralbank -h
+  def self.main
+   Tool.new.run(ARGV)
+  end
 end # module Tulipmania
 
 

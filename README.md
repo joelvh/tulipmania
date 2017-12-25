@@ -12,8 +12,59 @@ run your own hyper ledger tulip exchange nodes on the blockchain peer-to-peer ov
 
 
 
+## Command Line
 
-## Development
+Use the `tulipmania` command line tool. Try:
+
+```
+$ tulipmania -h     
+```
+
+resulting in:
+
+```
+Usage: tulipmania [options]
+
+  Wallet options:
+    -n, --name=NAME                  Address name (default: Anne)
+
+  Server (node) options:
+    -o, --host HOST                  listen on HOST (default: 0.0.0.0)
+    -p, --port PORT                  use PORT (default: 4567)
+    -h, --help                       Prints this help
+```
+
+To start a new (network) node using the default wallet
+address (that is, Anne) and the default server host and port settings
+use:
+
+```
+$ tulipmania
+```
+
+Stand back ten feets :-) while starting up the machinery.
+Ready to exchange tulips on the blockchain?
+In your browser open up the page e.g. `http://localhost:4567`. Voila!
+
+![](tulipmania.png)
+
+
+
+Note: You can start a second node on your computer -
+make sure to use a different port (use the `-p/--port` option)
+and (recommended)
+a different wallet address (use the `-n/--name` option).
+Example:
+
+```
+$ tulipmania -p 5678 -n Vincent
+```
+
+Happy mining!
+
+
+
+## Local Development Setup
 
 For local development - clone or download (and unzip) the tulipmania code repo.
 Next install all dependencies using bundler with a Gemfile e.g.:
@@ -34,8 +85,7 @@ run
 $ bundle       ## will use the Gemfile (see above)
 ```
 
-and now you're ready to run your own hyper ledger tulip exchange server node.
-Use the [`config.ru`](config.ru) script for rack:
+and now you're ready to run your own tulipmania server node. Use the [`config.ru`](config.ru) script for rack:
 
 ``` ruby
 # config.ru
@@ -47,15 +97,13 @@ require 'tulipmania'
 run Tulipmania::Service
 ```
 
-and startup the money printing machine using rackup - the rack command line tool:
+and startup the tulip exchange machinery using rackup - the rack command line tool:
 
 ```
 $ rackup       ## will use the config.ru - rackup configuration script (see above).
 ```
 
-In your browser open up the page e.g. `http://localhost:9292`. Voila!
-
-
+In your browser open up the page e.g. `http://localhost:9292`. Voila! Happy mining!
 
 
 ## License

@@ -10,6 +10,15 @@ class Blockchain
     @chain = chain
   end
 
+  def timestamp1637
+      ## change year to 1637 :-)
+      ##   note: time (uses signed integer e.g. epoch/unix time starting in 1970 with 0)
+      ##  todo: add nano/mili-seconds - why? why not? possible?
+      now = Time.now.utc.to_datetime
+      past = DateTime.new( 1637, now.month, now.mday, now.hour, now.min, now.sec, now.zone )
+      past
+    end
+
   def <<( txs )
     ## todo: check if is block or array
     ##   if array (of transactions) - auto-add (build) block
@@ -17,9 +26,9 @@ class Blockchain
     ##  for now just use transactions (keep it simple :-)
 
     if @chain.size == 0
-      block = Block.first( txs )
+      block = Block.first( txs, timestamp: timestamp1637 )
     else
-      block = Block.next( @chain.last, txs )
+      block = Block.next( @chain.last, txs, timestamp: timestamp1637 )
     end
     @chain << block
   end
