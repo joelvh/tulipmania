@@ -1,21 +1,15 @@
 
 
 class Node
-  attr_reader :id, :peers, :wallet, :bank
+  attr_reader :id, :peers, :wallet, :exchange
 
 
-  WALLET_ADDRESSES = %w[Sepp Franz Sissi Maria Eva Ferdl Max Adam]
-
-  def initialize( address: nil )
-    ## pick "random" address if nil (none passed in)
-    address ||= WALLET_ADDRESSES[rand( WALLET_ADDRESSES.size )]
-
-    @id     = SecureRandom.uuid
-    @peers  = []
-    @wallet = Wallet.new( address )
-    @bank   = Bank.new @wallet.address
+  def initialize( address: )
+    @id       = SecureRandom.uuid
+    @peers    = []
+    @wallet   = Wallet.new( address )
+    @exchange = Exchange.new @wallet.address
   end
-
 
 
   def on_add_peer( host, port )
@@ -23,7 +17,7 @@ class Node
     @peers.uniq!
     # TODO/FIX: no need to send to every peer, just the new one
     send_chain_to_peers
-    @bank.pending.each { |tx| send_transaction_to_peers( tx ) }
+    @exchange.pending.each { |tx| send_transaction_to_peers( tx ) }
   end
 
   def on_delete_peer( index )
@@ -34,7 +28,7 @@ class Node
   def on_add_transaction( from, to, amount, id )
     ## note: for now must always pass in id - why? why not? possible tx without id???
     tx = Tx.new( from, to, amount, id )
-    if @bank.sufficient_funds?( tx.from, tx.amount ) && @bank.add_transaction( tx )
+    if @exchange.sufficient_funds?( tx.from, tx.amount ) && @exchange.add_transaction( tx )
       send_transaction_to_peers( tx )
       return true
     else
@@ -44,7 +38,7 @@ class Node
 
   def on_send( to, amount )
     tx = @wallet.generate_transaction( to, amount )
-    if @bank.sufficient_funds?( tx.from, tx.amount ) && @bank.add_transaction( tx )
+    if @exchange.sufficient_funds?( tx.from, tx.amount ) && @exchange.add_transaction( tx )
       send_transaction_to_peers( tx )
       return true
     else
@@ -54,13 +48,13 @@ class Node
 
 
   def on_mine!
-    @bank.mine_block!
+    @exchange.mine_block!
     send_chain_to_peers
   end
 
   def on_resolve( data )
     chain_new = Blockchain.from_json( data )
-    if @bank.resolve!( chain_new )
+    if @exchange.resolve!( chain_new )
       send_chain_to_peers
       return true
     else
@@ -73,7 +67,7 @@ class Node
 private
 
   def send_chain_to_peers
-    data = JSON.pretty_generate( @bank.as_json )   ## payload in json
+    data = JSON.pretty_generate( @exchange.as_json )   ## payload in json
     @peers.each do |(host, port)|
       Net::HTTP.post(URI::HTTP.build(host: host, port: port, path: '/resolve'), data )
     end

@@ -1,6 +1,6 @@
 <div class="pending-transactions">
   <h2>Pending Transactions</h2>
-  <% if @node.bank.pending.any? %>
+  <% if @node.exchange.pending.any? %>
     <table>
       <tr>
         <th>From</th>
@@ -8,7 +8,7 @@
         <th>$</th>
         <th>Id</th>
       </tr>
-      <% @node.bank.pending.each do |tx| %>
+      <% @node.exchange.pending.each do |tx| %>
         <tr>
           <td><%= tx.from[0..15] %></td>
           <td><%= tx.to[0..15] %></td>

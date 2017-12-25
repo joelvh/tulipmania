@@ -10,6 +10,8 @@ require 'pp'
 
 ### 3rd party gems
 require 'sinatra/base'                         # note: use "modular" sinatra app / service
+
+require 'merkletree'
 require 'blockchain-lite/proof_of_work/block'  # note: use proof-of-work block only (for now)
 
 
@@ -19,110 +21,57 @@ require 'tulipmania/block'
 require 'tulipmania/cache'
 require 'tulipmania/transaction'
 require 'tulipmania/blockchain'
+require 'tulipmania/pool'
 require 'tulipmania/exchange'
 require 'tulipmania/ledger'
 require 'tulipmania/wallet'
 
 require 'tulipmania/node'
+require 'tulipmania/service'
 
 
 
 
 module Tulipmania
 
-class Service < Sinatra::Base
+  class Configuration
+     ## user/node settings
+     attr_accessor :address   ## single wallet address (for now "clear" name e.g.Sepp, Franz, etc.)
 
-  def self.banner
-    "tulipmania/#{VERSION} on Ruby #{RUBY_VERSION} (#{RUBY_RELEASE_DATE}) [#{RUBY_PLATFORM}] on Sinatra/#{Sinatra::VERSION} (#{ENV['RACK_ENV']})"
+     WALLET_ADDRESSES = %w[Alice Bob Max Franz Maria Ferdl Lisi Adam Eva]
+
+     ## system/blockchain settings
+     attr_accessor :coinbase
+     attr_accessor :mining_reward
+
+
+     def initialize
+       ## try default setup via ENV variables
+       ## pick "random" address if nil (none passed in)
+       @address = ENV[ 'TULIPMANIA_NAME'] || WALLET_ADDRESSES[rand( WALLET_ADDRESSES.size )]
+
+       @coinbase      = 'COINBASE'   ## use a different name - why? why not?
+       @mining_reward = 5
+     end
+  end # class Configuration
+
+
+  ## lets you use
+  ##   Tulipmania.configure do |config|
+  ##      config.address = 'Bloom & Blossom'
+  ##   end
+
+  def self.configure
+    yield( config )
+  end
+
+  def self.config
+    @config ||= Configuration.new
   end
 
 
-## - for now hard-code address e.g. Sepp
-NODE = Node.new( address: 'Sepp' )
-
-
-PUBLIC_FOLDER = "#{Tulipmania.root}/lib/tulipmania/public"
-VIEWS_FOLDER  = "#{Tulipmania.root}/lib/tulipmania/views"
-
-puts "[tulipmania] boot - setting public folder to: #{PUBLIC_FOLDER}"
-puts "[tulipmania] boot - setting views folder to: #{VIEWS_FOLDER}"
-
-set :public_folder, PUBLIC_FOLDER # set up the static dir (with images/js/css inside)
-set :views, VIEWS_FOLDER # set up the views dir
-
-set :static, true # set up static file routing  -- check - still needed?
-
-
-set connections: []
-
-
-get '/style.css' do
-  scss :style    ## note: converts (pre-processes) style.scss to style.css
-end
-
-
-get '/' do
-  @node = NODE
-  erb :index
-end
-
-post '/send' do
-  NODE.on_send( params[:to], params[:amount].to_i )
-  settings.connections.each { |out| out << "data: added transaction\n\n" }
-  redirect '/'
-end
-
-
-post '/transactions' do
-  if NODE.on_add_transaction(
-    params[:from],
-    params[:to],
-    params[:amount].to_i,
-    params[:id]
-  )
-    settings.connections.each { |out| out << "data: added transaction\n\n" }
-  end
-  redirect '/'
-end
-
-post '/mine' do
-  NODE.on_mine!
-  redirect '/'
-end
-
-post '/peers' do
-  NODE.on_add_peer( params[:host], params[:port].to_i )
-  redirect '/'
-end
-
-post '/peers/:index/delete' do
-  NODE.on_delete_peer( params[:index].to_i )
-  redirect '/'
-end
-
-
-
-post '/resolve' do
-  data = JSON.parse(request.body.read)
-  if data['chain'] && NODE.on_resolve( data['chain'] )
-    status 202     ### 202 Accepted; see httpstatuses.com/202
-    settings.connections.each { |out| out << "data: resolved\n\n" }
-  else
-    status 200    ### 200 OK
-  end
-end
-
-
-get '/events', provides: 'text/event-stream' do
-  stream :keep_open do |out|
-    settings.connections << out
-    out.callback { settings.connections.delete(out) }
-  end
-end
-
-
-end # class Service
 end # module Tulipmania
+
 
 
 # say hello

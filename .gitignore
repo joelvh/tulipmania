@@ -2,12 +2,12 @@
 #  cached / saved state / data
 
 data.json
+data.*.json
 
 
 ##########
-#  ignore Gemfile and  Gemfile.lock for now
+#  ignore Gemfile.lock for now
 
-Gemfile
 Gemfile.lock
 
 
